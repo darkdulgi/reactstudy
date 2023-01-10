@@ -1,12 +1,20 @@
 import logo from './logo.svg';
 import './App.css';
-
+function Header(){
+  return(
+    <div>
+      <header>
+        <h1>REACT</h1>
+      </header>
+    </div>
+  );
+}
 function App() {
   return (
     <div>
-      <header>
-        <h1>WEB</h1>
-      </header>
+      <Header></Header>
+      <Header></Header>
+      <Header></Header>
     </div>
   );
 }
