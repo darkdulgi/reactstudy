@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
+import ReactPlayer from 'react-player';
 
 function Header(props) {
   return <header>
@@ -34,26 +35,53 @@ function Article(props) {
   </article>
 }
 
+function Create(props) {
+  return <article>
+    <h2>Create</h2>
+    <form onSubmit={event => {
+      event.preventDefault();
+      const title = event.target.title.value;
+      const body = event.target.body.value;
+      props.MyCreate(title, body);
+    }}>
+      <p><input type='text' name='title' placeholder='title' /></p>
+      <p><textarea name='body' placeholder='article' /></p>
+      <p><input type='submit' /></p>
+    </form>
+  </article>
+}
+
 function App() {
   const [mode, setMode] = useState('HELLO');
   const [id, setId] = useState(null);
-  let content;
-  const topics = [
+  const [topics, setTopics] = useState([
     { id: 0, title: 'RUGAY', body: "YES I'M GAY" },
     { id: 1, title: 'URGAY', body: "NO U" },
-    { id: 2, title: 'WHO IS LMFAO', body: "LMFAO THE CHINESE HACKER" }
-  ]
+    { id: 2, title: 'WHO IS LMFAO', body: <ReactPlayer url='https://youtu.be/RtnmvOP703A' /> }
+  ]);
 
+  let content;
   if (mode === 'HELLO') content = <Article title='Hello' body='Click links'></Article>
   else if (mode === 'READ') content = <Article title={topics[id].title} body={topics[id].body}></Article>
+  else if (mode === 'CREATE') content = <Create MyCreate={(_title, _body) => {
+    const newtopics = [...topics];
+    newtopics.push({ id: topics.length, title: _title, body: _body });
+    setMode('READ');
+    setId(topics.length);
+    setTopics(newtopics);
+  }}></Create>
 
   return <div>
-    <Header title='React' MyEvent={() => { setMode('HELLO') }}></Header>
+    <Header title='React' MyEvent={() => { setMode('HELLO'); }}></Header>
     <Nav arr={topics} MyEvent={_id => {
       setMode('READ');
       setId(_id)
     }}></Nav>
     {content}
+    <a href='null' onClick={event => {
+      event.preventDefault();
+      setMode('CREATE');
+    }}>Create</a>
   </div>
 }
 
