@@ -51,9 +51,27 @@ function Create(props) {
   </article>
 }
 
+function Update(props) {
+  const [title,setTitle]=useState(props.title);
+  const [body,setBody]=useState(props.body);
+  return <article>
+    <h2>Update</h2>
+    <form onSubmit={event => {
+      event.preventDefault();
+      const title = event.target.title.value;
+      const body = event.target.body.value;
+      props.MyUpdate(title, body);
+    }}>
+      <p><input type='text' name='title' value={title} onChange={event=>{setTitle(event.target.value);}}/></p>
+      <p><textarea name='body' value={body} onChange={event=>{setBody(event.target.value);}}/></p>
+      <p><input type='submit' /></p>
+    </form>
+  </article>
+}
+
 function App() {
   const [mode, setMode] = useState('HELLO');
-  const [id, setId] = useState(null);
+  const [id, setId] = useState(0);
   const [topics, setTopics] = useState([
     { id: 0, title: 'RUGAY', body: "YES I'M GAY" },
     { id: 1, title: 'URGAY', body: "NO U" },
@@ -70,18 +88,37 @@ function App() {
     setId(topics.length);
     setTopics(newtopics);
   }}></Create>
+  else if (mode === 'UPDATE') {
+    content = <Update title={topics[id].title} body={topics[id].body} MyUpdate={(_title, _body) => {
+      const newtopics = [...topics];
+      newtopics[id].title = _title;
+      newtopics[id].body = _body;
+      setTopics(newtopics);
+      setMode('READ');
+    }}></Update >
+  }
 
   return <div>
     <Header title='React' MyEvent={() => { setMode('HELLO'); }}></Header>
+
     <Nav arr={topics} MyEvent={_id => {
       setMode('READ');
       setId(_id)
     }}></Nav>
+
     {content}
-    <a href='null' onClick={event => {
-      event.preventDefault();
-      setMode('CREATE');
-    }}>Create</a>
+
+    <ul>
+      <li><a href='null' onClick={event => {
+        event.preventDefault();
+        setMode('CREATE');
+      }}>Create</a></li>
+      <li><a href='null' onClick={event => {
+        event.preventDefault();
+        setMode('UPDATE');
+      }}>Update</a></li>
+    </ul>
+
   </div>
 }
 
