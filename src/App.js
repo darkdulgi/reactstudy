@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
 import ReactPlayer from 'react-player';
@@ -18,7 +17,7 @@ function Nav(props) {
     let t = props.arr[i];
     arr.push(<li key={t.id}><a id={t.id} href='null' onClick={event => {
       event.preventDefault();
-      props.MyEvent(event.target.id);
+      props.MyEvent(Number(event.target.id));
     }}>{t.title}</a></li>)
   }
   return <nav>
@@ -52,8 +51,8 @@ function Create(props) {
 }
 
 function Update(props) {
-  const [title,setTitle]=useState(props.title);
-  const [body,setBody]=useState(props.body);
+  const [title, setTitle] = useState(props.title);
+  const [body, setBody] = useState(props.body);
   return <article>
     <h2>Update</h2>
     <form onSubmit={event => {
@@ -62,37 +61,65 @@ function Update(props) {
       const body = event.target.body.value;
       props.MyUpdate(title, body);
     }}>
-      <p><input type='text' name='title' value={title} onChange={event=>{setTitle(event.target.value);}}/></p>
-      <p><textarea name='body' value={body} onChange={event=>{setBody(event.target.value);}}/></p>
+      <p><input type='text' name='title' value={title} onChange={event => { setTitle(event.target.value); }} /></p>
+      <p><textarea name='body' value={body} onChange={event => { setBody(event.target.value); }} /></p>
       <p><input type='submit' /></p>
     </form>
   </article>
 }
 
-function App() {
+const App = () => {
   const [mode, setMode] = useState('HELLO');
-  const [id, setId] = useState(0);
+  const [id, setId] = useState(1);
   const [topics, setTopics] = useState([
-    { id: 0, title: 'RUGAY', body: "YES I'M GAY" },
-    { id: 1, title: 'URGAY', body: "NO U" },
-    { id: 2, title: 'WHO IS LMFAO', body: <ReactPlayer url='https://youtu.be/RtnmvOP703A' /> }
+    { id: 1, title: 'RUGAY', body: "YES I'M GAY" },
+    { id: 2, title: 'URGAY', body: "NO U" },
+    { id: 3, title: 'WHO IS LMFAO', body: <ReactPlayer url='https://youtu.be/RtnmvOP703A' /> }
   ]);
-
   let content;
+
   if (mode === 'HELLO') content = <Article title='Hello' body='Click links'></Article>
-  else if (mode === 'READ') content = <Article title={topics[id].title} body={topics[id].body}></Article>
+  else if (mode === 'READ') {
+    let _title;
+    let _body;
+    for (let i = 0; i < topics.length; i++) {
+      const tp = topics[i];
+      if (tp.id === id) {
+        _title = tp.title;
+        _body = tp.body;
+        break;
+      }
+    }
+
+    content = <Article title={_title} body={_body}></Article>
+  }
   else if (mode === 'CREATE') content = <Create MyCreate={(_title, _body) => {
     const newtopics = [...topics];
-    newtopics.push({ id: topics.length, title: _title, body: _body });
+    newtopics.push({ id: topics.length + 1, title: _title, body: _body });
     setMode('READ');
-    setId(topics.length);
+    setId(topics.length + 1);
     setTopics(newtopics);
   }}></Create>
   else if (mode === 'UPDATE') {
-    content = <Update title={topics[id].title} body={topics[id].body} MyUpdate={(_title, _body) => {
+    let oldtitle;
+    let oldbody;
+    for (let i = 0; i < topics.length; i++) {
+      const tp = topics[i];
+      if (tp.id === id) {
+        oldtitle = tp.title;
+        oldbody = tp.body;
+        break;
+      }
+    }
+    content = <Update title={oldtitle} body={oldbody} MyUpdate={(_title, _body) => {
       const newtopics = [...topics];
-      newtopics[id].title = _title;
-      newtopics[id].body = _body;
+      for (let i = 0; i < topics.length; i++) {
+        if (id === newtopics[i].id) {
+          newtopics[i].body = _body;
+          newtopics[i].title = _title;
+          break;
+        }
+      }
       setTopics(newtopics);
       setMode('READ');
     }}></Update >
@@ -103,7 +130,7 @@ function App() {
 
     <Nav arr={topics} MyEvent={_id => {
       setMode('READ');
-      setId(_id)
+      setId(_id);
     }}></Nav>
 
     {content}
@@ -117,6 +144,17 @@ function App() {
         event.preventDefault();
         setMode('UPDATE');
       }}>Update</a></li>
+      <li><input type='button' value='delete' onClick={() => {
+        if (mode === 'READ') {
+          let newtopics = [];
+          for (let i = 0; i < topics.length; i++) {
+            if (id !== topics[i].id) {
+              newtopics.push(topics[i]);
+            }
+          }
+          setTopics(newtopics);
+        }
+      }} /></li>
     </ul>
 
   </div>
