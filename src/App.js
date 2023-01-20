@@ -1,6 +1,7 @@
 import './App.css';
 import { useState } from 'react';
 import ReactPlayer from 'react-player';
+import { Button, Box, Grid, ButtonGroup, Container } from '@mui/material';
 
 function Header(props) {
   return <header>
@@ -15,15 +16,17 @@ function Nav(props) {
   const arr = [];
   for (let i = 0; i < props.arr.length; i++) {
     let t = props.arr[i];
-    arr.push(<li key={t.id}><a id={t.id} href='null' onClick={event => {
-      event.preventDefault();
-      props.MyEvent(Number(event.target.id));
-    }}>{t.title}</a></li>)
+    if (t.visible) {
+      arr.push(<li key={t.id}><a id={t.id} href='null' onClick={event => {
+        event.preventDefault();
+        props.MyEvent(Number(event.target.id));
+      }}>{t.title}</a></li>)
+    }
   }
   return <nav>
-    <ol>
+    <ul>
       {arr}
-    </ol>
+    </ul>
   </nav>
 }
 
@@ -72,9 +75,9 @@ const App = () => {
   const [mode, setMode] = useState('HELLO');
   const [id, setId] = useState(1);
   const [topics, setTopics] = useState([
-    { id: 1, title: 'RUGAY', body: "YES I'M GAY" },
-    { id: 2, title: 'URGAY', body: "NO U" },
-    { id: 3, title: 'WHO IS LMFAO', body: <ReactPlayer url='https://youtu.be/RtnmvOP703A' /> }
+    { id: 0, visible: true, title: 'RUGAY', body: "YES I'M GAY" },
+    { id: 1, visible: true, title: 'URGAY', body: "NO U" },
+    { id: 2, visible: true, title: 'WHO IS LMFAO', body: <ReactPlayer url='https://youtu.be/RtnmvOP703A' /> }
   ]);
   let content;
 
@@ -83,31 +86,28 @@ const App = () => {
     let _title;
     let _body;
     for (let i = 0; i < topics.length; i++) {
-      const tp = topics[i];
-      if (tp.id === id) {
-        _title = tp.title;
-        _body = tp.body;
+      if (topics[i].id === id) {
+        _title = topics[i].title;
+        _body = topics[i].body;
         break;
       }
     }
-
     content = <Article title={_title} body={_body}></Article>
   }
   else if (mode === 'CREATE') content = <Create MyCreate={(_title, _body) => {
     const newtopics = [...topics];
-    newtopics.push({ id: topics.length + 1, title: _title, body: _body });
+    newtopics.push({ id: topics.length, visible: true, title: _title, body: _body });
     setMode('READ');
-    setId(topics.length + 1);
+    setId(topics.length);
     setTopics(newtopics);
   }}></Create>
   else if (mode === 'UPDATE') {
     let oldtitle;
     let oldbody;
     for (let i = 0; i < topics.length; i++) {
-      const tp = topics[i];
-      if (tp.id === id) {
-        oldtitle = tp.title;
-        oldbody = tp.body;
+      if (topics[i].id === id) {
+        oldtitle = topics[i].title;
+        oldbody = topics[i].body;
         break;
       }
     }
@@ -125,39 +125,49 @@ const App = () => {
     }}></Update >
   }
 
-  return <div>
+  return <Container fixed>
     <Header title='React' MyEvent={() => { setMode('HELLO'); }}></Header>
+    <Grid container>
+      <Grid item xs={4}>
+        <Box>
+          <Nav arr={topics} MyEvent={_id => {
+            setMode('READ');
+            setId(_id);
+          }}></Nav>
+          <ButtonGroup>
+            <Button
+              variant='outlined'
+              onClick={() => { setMode('CREATE'); }}>Create</Button>
+            <Button
+              variant='outlined'
+              onClick={() => { setMode('UPDATE'); }}>Update</Button>
+            <Button
+              variant='outlined'
+              onClick={() => {
+                if (mode === 'READ') {
+                  let newtopics = [...topics];
+                  for (let i = 0; i < newtopics.length; i++) {
+                    if (id === newtopics[i].id) {
+                      newtopics[i].visible = false;
+                      break;
+                    }
+                  }
+                  setTopics(newtopics);
+                  setMode('HELLO');
+                }
+              }}>Delete</Button>
+          </ButtonGroup>
+        </Box>
+      </Grid>
+      <Grid item xs={8}>
+        <Box>
+          {content}
+        </Box>
 
-    <Nav arr={topics} MyEvent={_id => {
-      setMode('READ');
-      setId(_id);
-    }}></Nav>
+      </Grid>
+    </Grid>
 
-    {content}
-
-    <ul>
-      <li><a href='null' onClick={event => {
-        event.preventDefault();
-        setMode('CREATE');
-      }}>Create</a></li>
-      <li><a href='null' onClick={event => {
-        event.preventDefault();
-        setMode('UPDATE');
-      }}>Update</a></li>
-      <li><input type='button' value='delete' onClick={() => {
-        if (mode === 'READ') {
-          let newtopics = [];
-          for (let i = 0; i < topics.length; i++) {
-            if (id !== topics[i].id) {
-              newtopics.push(topics[i]);
-            }
-          }
-          setTopics(newtopics);
-        }
-      }} /></li>
-    </ul>
-
-  </div>
+  </Container>
 }
 
 export default App;
