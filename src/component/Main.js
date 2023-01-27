@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Button, Box, Grid, ButtonGroup, Container } from '@mui/material';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Header = (props) => {
   return <header>
@@ -10,7 +10,7 @@ const Header = (props) => {
       props.MyEvent();
     }}>{props.title}</a></h1>
     <h2>
-    <Link to='/test'>Test Link</Link>
+      <Link to='/test'>Test Link</Link>
     </h2>
   </header>
 }

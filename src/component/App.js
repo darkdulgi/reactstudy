@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css';
-import Main from './main/Main'
-import Test from './main/Test'
-import Error from './main/Error'
+import Main from './Main'
+import Test from './Test'
+import Error from './Error'
 
 const App = () => {
   return <div>
