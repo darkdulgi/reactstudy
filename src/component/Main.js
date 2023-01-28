@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import ReactPlayer from 'react-player';
 import { Button, Box, Grid, ButtonGroup, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux'
 
 const Header = (props) => {
   return <header>
@@ -80,7 +80,7 @@ const Main = () => {
   const [topics, setTopics] = useState([
     { id: 0, visible: true, title: 'RUGAY', body: "YES I'M GAY" },
     { id: 1, visible: true, title: 'URGAY', body: "NO U" },
-    { id: 2, visible: true, title: 'WHO IS LMFAO', body: <ReactPlayer url='https://youtu.be/RtnmvOP703A' /> }
+    { id: 2, visible: true, title: 'WHO IS LMFAO', body: "" }
   ]);
   let content;
 
@@ -173,4 +173,9 @@ const Main = () => {
   </Container>
 }
 
-export default Main;
+const mapStateToProps = state => {
+  console.log(state);
+  return state;
+}
+
+export default connect(mapStateToProps)(Main);
