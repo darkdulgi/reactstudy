@@ -1,7 +1,9 @@
+import React from 'react';
 import { useState } from 'react';
 import { Button, Box, Grid, ButtonGroup, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux'
+import { connect, useSelector, useDispatch } from 'react-redux'
+import * as ACT from '../action'
 
 const Header = (props) => {
   return <header>
@@ -74,22 +76,21 @@ const Update = (props) => {
   </article>
 }
 
-const Main = () => {
-  const [mode, setMode] = useState('HELLO');
-  const [id, setId] = useState(1);
-  const [topics, setTopics] = useState([
-    { id: 0, visible: true, title: 'RUGAY', body: "YES I'M GAY" },
-    { id: 1, visible: true, title: 'URGAY', body: "NO U" },
-    { id: 2, visible: true, title: 'WHO IS LMFAO', body: "" }
-  ]);
+const Main = (state) => {
+  const dispatch = useDispatch()
+  const setId = (_id) => { dispatch(ACT.setId(_id)) };
+  const setMode = (_mode) => { dispatch(ACT.setMode(_mode)) };
+  let mode = state.mode;
+  let id = state.id;
+  let topics = [...state.topics];
   let content;
 
-  if (mode === 'HELLO') content = <Article title='Hello' body='Click links' />
+  if (mode === 'HELLO') content = <Article title='Hello' body='Click Links' />
   else if (mode === 'READ') {
     let _title;
     let _body;
     for (let i = 0; i < topics.length; i++) {
-      if (topics[i].id === id) {
+      if (topics[i].id === state.id) {
         _title = topics[i].title;
         _body = topics[i].body;
         break;
@@ -98,11 +99,7 @@ const Main = () => {
     content = <Article title={_title} body={_body} />
   }
   else if (mode === 'CREATE') content = <Create MyCreate={(_title, _body) => {
-    const newtopics = [...topics];
-    newtopics.push({ id: topics.length, visible: true, title: _title, body: _body });
-    setMode('READ');
-    setId(topics.length);
-    setTopics(newtopics);
+    ACT.createTopics({ id: topics.length, visible: true, title: _title, body: _body });
   }} />
   else if (mode === 'UPDATE') {
     let oldtitle;
@@ -115,16 +112,7 @@ const Main = () => {
       }
     }
     content = <Update title={oldtitle} body={oldbody} MyUpdate={(_title, _body) => {
-      const newtopics = [...topics];
-      for (let i = 0; i < topics.length; i++) {
-        if (id === newtopics[i].id) {
-          newtopics[i].body = _body;
-          newtopics[i].title = _title;
-          break;
-        }
-      }
-      setTopics(newtopics);
-      setMode('READ');
+      /*updateTopics(id);*/
     }} />
   }
 
@@ -147,17 +135,7 @@ const Main = () => {
             <Button
               variant='outlined'
               onClick={() => {
-                if (mode === 'READ') {
-                  let newtopics = [...topics];
-                  for (let i = 0; i < newtopics.length; i++) {
-                    if (id === newtopics[i].id) {
-                      newtopics[i].visible = false;
-                      break;
-                    }
-                  }
-                  setTopics(newtopics);
-                  setMode('HELLO');
-                }
+                /*removeTopics(id);*/
               }}>Delete</Button>
           </ButtonGroup>
         </Box>
@@ -171,10 +149,10 @@ const Main = () => {
     </Grid>
 
   </Container>
+
 }
 
-const mapStateToProps = state => {
-  console.log(state);
+const mapStateToProps = (state) => {
   return state;
 }
 

@@ -18,11 +18,10 @@ export const setId = _id => {
     }
 }
 
-export const createTopics = (_title, _body) => {
+export const createTopics = article => {
     return {
         type: CREATE,
-        title: _title,
-        body: _body
+        payload: article
     }
 }
 
@@ -33,11 +32,9 @@ export const removeTopics = _id => {
     }
 }
 
-export const updateTopics = (_id, _title, _body) => {
+export const updateTopics = article => {
     return {
         type: UPDATE,
-        id:_id,
-        title: _title,
-        body: _body
+        payload: article
     }
 }
