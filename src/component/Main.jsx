@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Button, Box, Grid, ButtonGroup, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { connect, useSelector, useDispatch } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import * as ACT from '../action'
 
 const Header = (props) => {
@@ -80,6 +80,9 @@ const Main = (state) => {
   const dispatch = useDispatch()
   const setId = (_id) => { dispatch(ACT.setId(_id)) };
   const setMode = (_mode) => { dispatch(ACT.setMode(_mode)) };
+  const createTopics = (article) => {dispatch(ACT.createTopics(article))};
+  const updateTopics = (article) => {dispatch(ACT.updateTopics(article))};
+  const removeTopics = (_id) => { dispatch(ACT.removeTopics(_id)) };
   let mode = state.mode;
   let id = state.id;
   let topics = [...state.topics];
@@ -99,7 +102,7 @@ const Main = (state) => {
     content = <Article title={_title} body={_body} />
   }
   else if (mode === 'CREATE') content = <Create MyCreate={(_title, _body) => {
-    ACT.createTopics({ id: topics.length, visible: true, title: _title, body: _body });
+    createTopics({ id: topics.length, visible: true, title: _title, body: _body });
   }} />
   else if (mode === 'UPDATE') {
     let oldtitle;
@@ -112,7 +115,7 @@ const Main = (state) => {
       }
     }
     content = <Update title={oldtitle} body={oldbody} MyUpdate={(_title, _body) => {
-      /*updateTopics(id);*/
+      updateTopics({id:id, visible:true, title:_title, body:_body});
     }} />
   }
 
@@ -135,7 +138,7 @@ const Main = (state) => {
             <Button
               variant='outlined'
               onClick={() => {
-                /*removeTopics(id);*/
+                removeTopics(id);
               }}>Delete</Button>
           </ButtonGroup>
         </Box>

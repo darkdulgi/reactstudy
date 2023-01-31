@@ -4,9 +4,9 @@ const initState = {
   mode: 'HELLO',
   id: 1,
   topics: [
-    { id: 0, visible: true, title: 'RUGAY', body: "YES I'M GAY" },
-    { id: 1, visible: true, title: 'URGAY', body: "NO U" },
-    { id: 2, visible: true, title: 'WHO IS LMFAO', body: "LMFAO THE CHINESE HACKER" }
+    { id: 0, visible: true, title: '공지', body: "욕설 금지" },
+    { id: 1, visible: true, title: '게시판입니다', body: "게시판입니다" },
+    { id: 2, visible: true, title: '안녕하세요', body: "저는 한국인입니다" }
   ]
 }
 
@@ -40,7 +40,7 @@ const reducer = (state = initState, action) => {
           break;
         }
       }
-      return { ...state, topcis: newtopics, mode: 'READ', id: action.payload.id };
+      return { ...state, topics: newtopics, mode: 'READ', id: action.payload.id };
 
     default:
       return state;
